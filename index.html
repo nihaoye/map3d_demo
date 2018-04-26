@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Use correct character set. -->
+    <meta charset="utf-8">
+    <!-- Tell IE to use the latest, best version. -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Make the application on mobile take up the full browser screen and disable user scaling. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <title>Hello World!</title>
+    <script src="js/Cesium/Cesium.js"></script>
+    <script src="js/fc3dmap.js"></script>
+    <style>
+        @import url(js/Cesium/Widgets/widgets.css);
+        html, body, #cesiumContainer {
+            width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+<div id="cesiumContainer"></div>
+<script>
+    var config={
+        initialPosition:[113.355,23.705,1000]
+    };
+    var fc3dmap = new Fc3dmap('cesiumContainer',undefined,config);
+    var featureStyle={
+        style:{
+            image:'js/Cesium/Assets/Textures/maki/marker.png'
+        }
+    };
+    var feature=fc3dmap.createFeature({id:123456,x:113.355,y:23.705},featureStyle);
+    fc3dmap.viewer.entities.add(feature);
+</script>
+</body>
+</html>

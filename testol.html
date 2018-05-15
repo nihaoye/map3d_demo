@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Geolocation</title>
+    <link rel="stylesheet" href="https://openlayers.org/en/v4.6.5/css/ol.css" type="text/css">
+    <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
+    <script src="https://openlayers.org/en/v4.6.5/build/ol.js"></script>
+    <style>
+        html,body{
+            margin:0;
+            padding:0;
+        }
+        #map{
+            width:100vw;
+            height:100vh;
+            overflow:hidden;
+        }
+    </style>
+</head>
+<body>
+<div id="map" class="map"></div>
+<script>
+    var view = new ol.View({
+        center: [0, 0],
+        zoom: 18
+    });
+    var map = new ol.Map({
+        layers: [
+            new ol.layer.Tile({
+                source: new ol.source.OSM()
+            })
+        ],
+        target: 'map',
+        controls: ol.control.defaults({
+            attributionOptions: {
+                collapsible: false
+            }
+        }),
+        view: view
+    });
+
+    var geolocation = new ol.Geolocation({
+        projection: view.getProjection()
+    });
+
+    geolocation.setTracking(true);
+    // update the HTML page when the position changes.
+    geolocation.on('change', function() {
+
+    });
+    // handle geolocation error.
+    geolocation.on('error', function(error) {
+
+    });
+
+    var accuracyFeature = new ol.Feature();
+    var isfirst=true;
+    geolocation.on('change:accuracyGeometry', function() {
+        accuracyFeature.setGeometry(geolocation.getAccuracyGeometry());
+        if(isfirst){
+            map.getView().setCenter(geolocation.getPosition());
+            isfirst=false;
+        }
+    });
+    var positionFeature = new ol.Feature();
+    positionFeature.setStyle(new ol.style.Style({
+        image: new ol.style.Circle({
+            radius: 6,
+            fill: new ol.style.Fill({
+                color: '#3399CC'
+            }),
+            stroke: new ol.style.Stroke({
+                color: '#fff',
+                width: 2
+            })
+        })
+    }));
+
+    geolocation.on('change:position', function() {
+        var coordinates = geolocation.getPosition();
+        positionFeature.setGeometry(coordinates ?
+                new ol.geom.Point(coordinates) : null);
+    });
+
+    new ol.layer.Vector({
+        map: map,
+        source: new ol.source.Vector({
+            features: [accuracyFeature, positionFeature]
+        })
+    });
+</script>
+</body>
+</html>
